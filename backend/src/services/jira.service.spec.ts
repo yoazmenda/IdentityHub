@@ -7,8 +7,14 @@ jest.mock('axios');
 // Real encrypt/decrypt needs a 32-byte ENCRYPTION_KEY; irrelevant to what this suite tests, so pass tokens through as-is.
 jest.mock('../common/crypto.util', () => ({ encrypt: (s: string) => s, decrypt: (s: string) => s }));
 jest.mock('../config/env', () => ({
-  env: { jiraClientId: 'client-id', jiraClientSecret: 'client-secret', jiraRedirectUri: 'https://app.test/callback' },
+  env: {
+    jiraClientId: 'client-id',
+    jiraClientSecret: 'client-secret',
+    jiraRedirectUri: 'https://app.test/callback',
+    jiraConfigured: true,
+  },
 }));
+import { env } from '../config/env';
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 const ORG_ID = 'org-1';
@@ -47,6 +53,24 @@ describe('JiraService', () => {
     } as never;
     service = new JiraService(jiraConnectionsDao);
     mockedAxios.isAxiosError.mockImplementation((err: unknown) => (err as { isAxiosError?: boolean })?.isAxiosError === true);
+  });
+
+  describe('buildAuthorizeUrl', () => {
+    afterEach(() => {
+      (env as { jiraConfigured: boolean }).jiraConfigured = true;
+    });
+
+    it('returns the Atlassian authorize URL when Jira OAuth is configured', () => {
+      const url = service.buildAuthorizeUrl('some-state');
+      expect(url).toContain('https://auth.atlassian.com/authorize');
+      expect(url).toContain('client_id=client-id');
+      expect(url).toContain('state=some-state');
+    });
+
+    it('throws 503 instead of an unhandled crash when JIRA_CLIENT_ID/SECRET are unset', () => {
+      (env as { jiraConfigured: boolean }).jiraConfigured = false;
+      expect(() => service.buildAuthorizeUrl('some-state')).toThrow(ServiceUnavailableException);
+    });
   });
 
   describe('listProjects', () => {

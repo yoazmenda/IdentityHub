@@ -47,6 +47,11 @@ export class JiraService {
 
   /** `state` is verified in the callback to prevent CSRF. */
   buildAuthorizeUrl(state: string): string {
+    if (!env.jiraConfigured) {
+      throw new ServiceUnavailableException(
+        'Jira integration is not configured for this environment. Set JIRA_CLIENT_ID / JIRA_CLIENT_SECRET and restart the backend.',
+      );
+    }
     const params = new URLSearchParams({
       audience: 'api.atlassian.com',
       client_id: env.jiraClientId,

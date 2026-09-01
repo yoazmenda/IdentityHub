@@ -23,6 +23,11 @@ export const env = {
   get jiraRedirectUri(): string {
     return required('JIRA_REDIRECT_URI');
   },
+  /** Non-throwing check so callers can return a clean 4xx instead of an unhandled 500 when the
+   * Jira OAuth app hasn't been registered yet (JIRA_CLIENT_ID / JIRA_CLIENT_SECRET left blank). */
+  get jiraConfigured(): boolean {
+    return Boolean(process.env.JIRA_CLIENT_ID && process.env.JIRA_CLIENT_SECRET);
+  },
   get port(): number {
     return process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   },

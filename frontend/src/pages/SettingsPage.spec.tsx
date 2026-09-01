@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { SettingsPage } from './SettingsPage';
 import { jiraApi } from '../api/jira';
 import { apiKeysApi } from '../api/api-keys';
+import { ApiRequestError } from '../api/client';
 import { AuthProvider } from '../hooks/useAuth';
 
 vi.mock('../api/jira');
@@ -61,6 +62,18 @@ describe('SettingsPage', () => {
     renderPage('/settings?jira_error=connect_failed');
 
     expect(await screen.findByText('Failed to connect Jira. Please try again.')).toBeInTheDocument();
+  });
+
+  it('shows the server error message when clicking Connect to Jira fails, instead of failing silently', async () => {
+    vi.mocked(jiraApi.status).mockResolvedValue({ connected: false });
+    vi.mocked(jiraApi.connect).mockRejectedValue(
+      new ApiRequestError(503, { error: 'Jira integration is not configured for this environment.' }),
+    );
+    renderPage();
+
+    await userEvent.click(await screen.findByRole('button', { name: /connect to jira/i }));
+
+    expect(await screen.findByText('Jira integration is not configured for this environment.')).toBeInTheDocument();
   });
 
   it('shows an empty hint when there are no API keys yet', async () => {

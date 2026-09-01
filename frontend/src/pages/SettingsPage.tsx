@@ -8,6 +8,7 @@ import { TextField } from '../components/FormField';
 import { Skeleton } from '../components/Skeleton';
 import { jiraApi } from '../api/jira';
 import { apiKeysApi } from '../api/api-keys';
+import { ApiRequestError } from '../api/client';
 import type { ApiKey, JiraStatus } from '../types';
 
 export function SettingsPage() {
@@ -15,6 +16,7 @@ export function SettingsPage() {
   const [jira, setJira] = useState<JiraStatus | null>(null);
   const [banner, setBanner] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [connecting, setConnecting] = useState(false);
 
   const [keys, setKeys] = useState<ApiKey[] | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -45,6 +47,20 @@ export function SettingsPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function handleConnect() {
+    setConnecting(true);
+    setBanner(null);
+    try {
+      await jiraApi.connect(); // navigates the browser to Atlassian on success — never resolves here
+    } catch (err) {
+      setBanner({
+        tone: 'error',
+        text: err instanceof ApiRequestError ? err.body.error : 'Failed to connect Jira. Please try again.',
+      });
+      setConnecting(false);
+    }
+  }
 
   async function handleDisconnect() {
     if (!confirm('Disconnect Jira? You will need to reconnect to create new tickets.')) return;
@@ -133,7 +149,7 @@ export function SettingsPage() {
               <p className="text-sm text-gray-500">
                 Connect your Jira Cloud workspace to create tickets directly from findings.
               </p>
-              <Button onClick={() => jiraApi.connect()}>
+              <Button onClick={handleConnect} loading={connecting}>
                 <Link2 className="h-4 w-4" />
                 Connect to Jira
               </Button>
