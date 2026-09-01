@@ -24,12 +24,40 @@ describe('RecentTicketsPage', () => {
     window.localStorage.clear();
   });
 
-  it('shows a "Jira not connected" empty state with a link to Settings when disconnected', async () => {
+  it('still shows previously created tickets from the local ledger when Jira is disconnected', async () => {
+    // Regression: revoking access in Jira (or letting the connection expire) must not hide tickets
+    // already filed — Recent Tickets reads a local ledger, never the live Jira API (see README).
     vi.mocked(jiraApi.status).mockResolvedValue({ connected: false });
+    vi.mocked(jiraTicketsApi.recent).mockResolvedValue({
+      tickets: [
+        {
+          id: 't1',
+          jira_issue_key: 'KAN-4',
+          jira_url: 'https://acme.atlassian.net/browse/KAN-4',
+          jira_project_key: 'KAN',
+          title: 'Stale Service Account',
+          created_at: new Date().toISOString(),
+        },
+      ],
+    });
     renderPage();
 
-    expect(await screen.findByText('Jira not connected')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /go to settings/i })).toHaveAttribute('href', '/settings');
+    await waitFor(() => {
+      expect(jiraTicketsApi.recent).toHaveBeenCalledWith({ projectKey: undefined, limit: 10 });
+    });
+    expect(jiraApi.projects).not.toHaveBeenCalled();
+    const link = await screen.findByRole('link', { name: /KAN-4/ });
+    expect(link).toHaveAttribute('href', 'https://acme.atlassian.net/browse/KAN-4');
+    expect(screen.getByText(/Connect Jira in/)).toBeInTheDocument();
+  });
+
+  it('shows a "no tickets yet" empty state with a reconnect hint when disconnected and nothing was ever filed', async () => {
+    vi.mocked(jiraApi.status).mockResolvedValue({ connected: false });
+    vi.mocked(jiraTicketsApi.recent).mockResolvedValue({ tickets: [] });
+    renderPage();
+
+    expect(await screen.findByText('No tickets yet')).toBeInTheDocument();
+    expect(screen.getByText(/Connect Jira in/)).toBeInTheDocument();
   });
 
   it('defaults to the first project and shows its recent tickets', async () => {
