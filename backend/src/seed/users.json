@@ -1,0 +1,23 @@
+[
+  {
+    "id": "da15db1e-ccf8-4adc-bcdb-36f53face87b",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "email": "john@acme.com",
+    "password": "password123",
+    "name": "John Doe"
+  },
+  {
+    "id": "f5869697-b60d-428f-95bd-ab46ef43196f",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "email": "jane@acme.com",
+    "password": "password123",
+    "name": "Jane Smith"
+  },
+  {
+    "id": "3f50f9d1-346a-46c7-9d67-8442f7fdb736",
+    "organization_id": "e16e50d6-4c8d-4bb5-8280-cfbd973161f0",
+    "email": "bob@globex.com",
+    "password": "password123",
+    "name": "Bob Johnson"
+  }
+]

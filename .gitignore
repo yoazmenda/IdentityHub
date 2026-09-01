@@ -1,0 +1,42 @@
+# .env is intentionally committed (see README -> Quick Start) — a local override goes in
+# .env.local instead, which is never read by docker-compose but is here for anyone who wants an
+# untracked copy to edit freely.
+.env.local
+
+# Assignment brief — kept locally for reference, not published with a public repo
+Home_Assignment*.pdf
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+build/
+**/dist/
+**/build/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# OS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Test artifacts
+coverage/
+**/coverage/
+
+# Playwright MCP session artifacts
+.playwright-mcp/
+
+# Playwright test suite output
+test-results/
+playwright-report/
+

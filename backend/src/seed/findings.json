@@ -1,0 +1,82 @@
+[
+  {
+    "id": "02d320a9-bec0-4ff8-99c7-3b847618cd21",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Stale Service Account: svc-deploy-prod",
+    "description": "Service account svc-deploy-prod has not authenticated in 90 days but still holds deploy permissions on the production Kubernetes cluster. No owning team could be identified in the last access review.",
+    "severity": "critical",
+    "status": "open"
+  },
+  {
+    "id": "7fb25377-9636-4ffd-bc8c-be11cc45fa4f",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Overprivileged API Key: analytics-reader",
+    "description": "API key 'analytics-reader' is scoped with full read/write access to the data warehouse, but usage logs show only SELECT queries over the last 6 months. Recommend scoping down to read-only.",
+    "severity": "high",
+    "status": "open"
+  },
+  {
+    "id": "170445a4-3dbb-407e-88d9-0afdfce3ce59",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Expiring Service Principal: sp-backup-agent (7 days)",
+    "description": "Azure service principal sp-backup-agent's client secret expires in 7 days. It is used by the nightly backup job for the billing database — rotation must happen before expiry to avoid a failed backup.",
+    "severity": "high",
+    "status": "open"
+  },
+  {
+    "id": "c04d7adf-b15a-4b24-8c36-a82e81b8fdf4",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Unused Machine Identity: bot-legacy-sync",
+    "description": "Machine identity bot-legacy-sync has had zero API calls in 180 days. Originally provisioned for a data sync job that was migrated to a new pipeline last quarter. Candidate for deprovisioning.",
+    "severity": "medium",
+    "status": "open"
+  },
+  {
+    "id": "1a3ba5e6-0a38-4443-8c5e-bac1d016b5c7",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Shared Service Account: svc-monitoring (used by 3 teams)",
+    "description": "svc-monitoring's credentials are shared across the Platform, SRE, and Data teams with no per-team attribution possible in audit logs. Recommend splitting into per-team identities.",
+    "severity": "medium",
+    "status": "open"
+  },
+  {
+    "id": "9899e261-0e4e-4433-ba2d-97fbaaccc777",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Stale API Key: key-ci-runner-2023",
+    "description": "CI runner key from the 2023 pipeline migration was never revoked after cutover to the new runner fleet. Confirmed unused since the migration; already rotated out of all pipeline configs.",
+    "severity": "low",
+    "status": "resolved"
+  },
+  {
+    "id": "88734ed7-34c7-46f8-aa57-5cae55b988ce",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Overprivileged Service Account: svc-data-export (write access to prod)",
+    "description": "svc-data-export is used exclusively by a read-only nightly export job, but its IAM role grants write access to the production database. Principle of least privilege violation.",
+    "severity": "critical",
+    "status": "open"
+  },
+  {
+    "id": "b081e6a4-30df-4e0f-8522-d27f8c69cf79",
+    "organization_id": "ba0d9049-b31d-458d-ac01-5f401c7b2707",
+    "title": "Expiring OAuth Client Secret: oauth-partner-portal (3 days)",
+    "description": "The OAuth client secret for the partner-portal integration expires in 3 days. This integration is actively used by two enterprise partners for SSO — an unplanned expiry would lock them out.",
+    "severity": "critical",
+    "status": "open"
+  },
+  {
+    "id": "c3d78560-9bbc-4b7e-a4c3-0f1b4902bb64",
+    "organization_id": "e16e50d6-4c8d-4bb5-8280-cfbd973161f0",
+    "title": "Stale Service Account: svc-etl-worker",
+    "description": "svc-etl-worker has not run in 60 days after the ETL pipeline it served was decommissioned. Still holds read access to three production databases.",
+    "severity": "high",
+    "status": "open"
+  },
+  {
+    "id": "d53face3-1128-466b-b949-6d67ba00d5cf",
+    "organization_id": "e16e50d6-4c8d-4bb5-8280-cfbd973161f0",
+    "title": "Overprivileged API Key: reporting-service",
+    "description": "The reporting-service API key has org-admin scope but the service only needs read access to two reporting endpoints. Flagged in the latest quarterly access review.",
+    "severity": "medium",
+    "status": "open"
+  }
+]
